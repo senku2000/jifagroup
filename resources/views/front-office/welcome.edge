@@ -1,0 +1,58 @@
+@layout('front-office/layouts/clientmain')
+
+@section('content')
+
+<main>
+
+   <!-- Header -->
+        <header id="header" class="header pt-28 pb-5 text-center md:pt-36 lg:text-left xl:pt-44 xl:pb-32">
+            <div class="container px-4 sm:px-8 lg:grid lg:grid-cols-2 lg:gap-x-8">
+                <div class="mb-16 lg:mt-32 xl:mt-40 xl:mr-12">
+                    <h1 class="h1-large mb-5  md:pt-auto pt-4">Vente en ligne de toutes sortes de produits</h1>
+                    <p class="p-large mb-8 text-lg">Explorer notre panoplie de produits , faites votre choix , et realisée un super achat !</p>
+                   <a href="{{route('store')}}"
+                      class="text-lg no-underline text-white py-3 px-4 rounded-full bg-color hover-bg-color  transition duration-300"
+                      >
+                      Commencez le shooping
+                    </a>
+                </div>
+                <div class="xl:text-right">
+                    <img class="inline" src="{{assetsUrl('assets/4706264.jpg')}}" alt="alternative" />
+                </div>
+            </div> <!-- end of container -->
+        </header> <!-- end of header -->
+        <!-- end of header -->
+
+    
+    
+    <section class="text-center container">      
+        <div class="col-lg-6 col-md-8 mx-auto">
+            
+            <h1 class="h1-large font-normal h-se">Nouveauté</h1>
+            <div class="h-1 bg-color m-auto" style="width:15%;"></div>        
+        </div>      
+    </section>
+
+    <div class="album py-5">
+        <div class="container">
+
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+              
+                @each(product in products)
+                  @component('front-office/components/prodCard',{product:product})                  
+                  @endcomponent
+                @else
+                  <div class="m-auto text-center">
+                    Aucun nouveau produit
+                  </div>
+                @endeach                                                         
+                
+            </div>
+        </div>
+    </div>
+
+   
+    
+</main>
+
+@endsection

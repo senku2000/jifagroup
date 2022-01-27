@@ -1,0 +1,333 @@
+
+<form id="formGet" class="row mt-4" action="" method="GET">
+
+    <div class="col-12 col-md-6 py-auto mb-2">
+        @if(sideMenu!=='products')
+            <label class="form-inline float-left mr-1">Filter by :</label>
+            <div class="form-inline float-left mr-4">
+                <select id="menu" class="form-control btn-sm" name="filter" onchange="products()">
+                    <option value="all" {{(filter==='all')? 'selected': '' }}>
+                        No matter
+                    </option>
+                    <option value="onStore" {{(filter==='onStore')? 'selected': ''}}>
+                        On store
+                    </option>
+                    <option value="notOnStore" {{(filter==='notOnStore')? 'selected': ''}}>
+                        Not on store
+                    </option>
+                </select>
+            </div>
+        @endif
+
+        @if(sideMenu!=='categories')
+            <label class="form-inline float-left mr-1">Category :</label>
+            <div class="form-inline float-left mr-4">
+                <select id="filter" class="form-control btn-sm" name="filter" onchange="products()">
+                    <option value="noMatter" {{(filter==='noMatter')? 'selected': '' }}>
+                        No matter
+                    </option>
+                    <option value="noCategory" {{(filter==='noCategory')? 'selected': ''}}>
+                        No category
+                    </option>
+                    @each(category in categories)
+                        <option value="{{category.id}}" {{filter===category.id? 'selected': '' }}>
+                            {{category.name}}
+                        </option>
+                    @endeach
+                </select>
+            </div>
+        @endif
+        
+    </div>
+
+    <div class="col-12 col-md-6 py-auto mb-2">
+
+        <div class="form-inline btn-group float-right">
+            <button id="1" type="button" class="btn btn-outline-secondary btn-sm" onclick="setOnDesc(1)">
+                <i class="fa fa-arrow-down"></i>
+            </button>
+            <button id="-1" type="button" class="btn btn-outline-secondary btn-sm" onclick="setOnDesc(-1)">
+                <i class="fa fa-arrow-up"></i>
+            </button>
+        </div>
+        
+        <div class="form-inline float-right mr-4">
+            <select id="sort2" class="form-control btn-sm" name="sort2" onchange="products()">
+                <option value="updated_at">Recently</option>
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+                <option value="quantity">Quantity</option>
+                <option value="created_at">Date</option>
+            </select>
+        </div>
+        <label class="form-inline float-right mr-1">and by :</label>
+
+        <div class="form-inline float-right mr-1">
+            <select id="sort1" class="form-control btn-sm" name="sort1" onchange="products()">
+                <option value="updated_at">Recently</option>
+                <option value="name">Name</option>
+                <option value="price">Price</option>
+                <option value="quantity">Quantity</option>
+                <option value="created_at">Date</option>
+            </select>
+        </div>
+        <label class="form-inline float-right mr-1">Sort by :</label>
+
+    </div>
+
+    <div class="col-12">
+
+        <div class="form-inline float-left">
+            <select id="perPage" class="form-control btn-sm" name="perPage"
+                    onchange="products()">
+                <option value="10">10 per Page</option>
+                <option value="20">20 per Page</option>
+                <option value="30">30 per Page</option>
+                <option value="40">40 per Page</option>
+                <option value="50">50 per Page</option>
+            </select>
+        </div>
+
+        <div class="btn-group float-right">
+            @each(page in pages)
+                <button id="page{{page}}" class="btn btn-sm btn-outline-secondary" type="button"
+                        onclick="setPage({{ page }})">
+                    {{ page }}
+                </button>
+            @endeach
+        </div>
+
+    </div>
+
+</form>
+
+
+<hr>
+
+
+@if(products.length > 0)
+
+    <div class="row mt-4">
+        <div class="col-12 ">
+
+            <p class="form-inline float-left mr-2">
+                Actions for select :
+            </p>
+
+            <div class="form-inline btn-group float-left">
+                
+                <button class="btn btn-outline-secondary btn-sm" onclick="select('addStore')">
+                    <i class="fa fa-plus mr-1"></i>
+                    <i class="fa fa-shopping-bag"></i>
+                </button>
+
+                <button class="btn btn-outline-secondary btn-sm" onclick="select('removeStore')">
+                    <i class="fa fa-minus mr-1"></i>
+                    <i class="fa fa-plus fa-shopping-bag"></i>
+                </button>
+
+                <button class="btn btn-outline-secondary btn-sm" onclick="select('deleteProducts')">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="table-responsive">
+
+        <form id="actionForm" action="{{ route('products', {code: 'all'}) }}" method="POST">
+        {{ csrfField() }}
+
+        <table id="allProduct" class="table table-striped table-sm">
+            <thead>
+
+            <tr>
+                <th scope="col">Select</th>
+                <th scope="col">Code</th>
+                <th scope="col">Image</th>
+                <th scope="col">Product name</th>
+                <th scope="col">Category</th>
+                <th class="text-center" scope="col">Price</th>
+                <th class="text-center" scope="col">Quantity</th>
+                <th scope="col">On store</th>
+                <th scope="col">Created at</th>
+            </tr>
+
+            </thead>
+            <tbody>
+            
+            
+            @each((product, key) in products)
+                <tr class="h-20">
+                <td>
+                    <span>
+                    <input id="{{product.id}}" type="checkbox" name="{{product.id}}">
+                    </span>
+                </td>
+
+                
+                <td>{{ product.id }}</td>
+
+                <td>
+                    @if(product.imageUrl)
+                    <img src="{{ assetsUrl(product.imageUrl) }}" class="h-20 w-20">
+                    @else
+                    No image
+                    @endif
+                </td>
+
+                <td>{{ product.name }}</td>
+
+                <td>
+                    {{ product.category.name }}
+                </td>
+
+                <td class="text-right">{{ product.price }}</td>
+
+                <td class="text-right">{{ product.quantity }}</td>
+
+                <td>
+                    @if(product.onStore)
+                    <i class="fa fa-store"></i>
+                    Yes
+                    @else
+                    No
+                    @endif
+                </td>
+
+                <td>{{ product.created_at }}</td>
+
+                <td>
+                    <div class="flex">
+                    <a type="button" class="btn btn-outline-primary circle mr-2"
+                        href="{{ route('updateProduct', {id: product.id}) }}">
+                        <i class="fa fa-edit"></i>
+                    </a>
+
+                    <button onclick="deleteProduct({{key+1}})" type="button"
+                            class="btn btn-outline-danger circle">
+                        <i class="fa fa-trash"></i>
+                    </button>
+
+                    </div>
+                </td>
+
+                </tr>
+            @endeach
+            
+            </tbody>
+        </table>
+
+        </form>
+
+    </div>
+
+@else
+    <p>No products</p>
+
+@endif
+
+
+<style>
+    .circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+</style>
+
+
+<script>
+    const sort1 = {{{ toJSON(sort1) }}}
+    const sort2 = {{{ toJSON(sort2) }}}
+    const perPage = {{{ toJSON(perPage) }}}
+
+    let page = {{{ toJSON(page) }}}
+    let onDesc = {{{ toJSON(onDesc) }}}
+
+    document.getElementById("sort1").value = sort1
+    document.getElementById("sort2").value = sort2
+    document.getElementById("perPage").value = perPage
+    document.getElementById("page"+page).classList.add('active')
+    document.getElementById(onDesc).classList.add('active')
+
+    function setPage(p){
+        page = p
+        products()
+    }
+
+    function setOnDesc(d){
+        onDesc = d
+        products()
+    }
+
+    function products(){
+        var arrow = document.createElement("INPUT")
+        arrow.setAttribute("type", "number")
+        arrow.setAttribute("name", "onDesc")
+        arrow.setAttribute("value", onDesc)
+        document.getElementById("formGet").appendChild(arrow)
+        var pg = document.createElement("INPUT")
+        pg.setAttribute("type", "number")
+        pg.setAttribute("name", "page")
+        pg.setAttribute("value", page)
+        document.getElementById("formGet").appendChild(pg)
+        document.getElementById("formGet").submit()
+
+    }
+    
+    function deleteProduct(key){
+        const  products = {{{ toJSON(products)}}}
+        const product = (products[key-1])
+        var onDelete = confirm("Are you sure to delete "+product.name+" ?")
+        if(onDelete){
+            location.replace("/admin/product/delete/"+product.id)
+        }
+    }
+
+    function select(action){
+        const  products = {{{ toJSON(products)}}}
+        const productsCodes = []
+
+        products.forEach(product => {
+            const ok = document.getElementById(product.id).checked === true
+            if(ok){
+                productsCodes.push(product.id)
+            }
+        });
+
+        if(productsCodes.length > 0){
+            let on
+            switch(action){
+                case "addStore":
+                on = confirm("Are you sure to add on the store, the "+productsCodes.length+" products selected ?")
+                break;
+                case "removeStore":
+                on = confirm("Are you sure to remove from the store, the "+productsCodes.length+" products selected ?")
+                break;
+                case "deleteProducts":
+                on = confirm("Are you sure to delete, the "+productsCodes.length+" products selected ?")
+                break;
+            }
+
+            if(on){
+                var x = document.createElement("INPUT")
+                x.setAttribute("type", "text")
+                x.setAttribute("name", "action")
+                x.setAttribute("value", action)
+                document.getElementById("actionForm").appendChild(x)
+                document.getElementById("actionForm").submit();
+            }
+        
+        }else{
+            alert("No product is selected !")
+        }
+
+    }
+
+</script>

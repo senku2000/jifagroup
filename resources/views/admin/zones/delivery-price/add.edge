@@ -1,0 +1,93 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center mt-4 pt-3 pb-2 mb-3
+                border-bottom">
+
+            <h5>Add delivery price</h5>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('adminDeliveryPrices') }}">
+                    <i class="fa fa-back">Go back</i>
+                </a>
+            </div>
+
+        </div>
+
+        <form action="" method="post" class="form-row">
+            {{ csrfField() }}
+
+            <div class="form-group col-md-6 mb-2">
+                <label for="city">City :</label>
+                <select name="city" id="city" class="form-control" onchange="selectDistricts()">
+                    <option value="" selected>Choose city</option>
+                    @each(city in cities)
+                        <option value="{{city.id}}">{{ city.name }}</option>
+                    @endeach
+                </select>
+                @if(hasErrorFor('city'))
+                    <small class="text-danger">{{ getErrorFor('city') }}</small>
+                @endif
+            </div>
+
+            <div class="form-group col-md-6 mb-2">
+                <label for="district">District :</label>
+                <select name="district" id="district" class="form-control"></select>
+                @if(hasErrorFor('district'))
+                    <small class="text-danger">{{ getErrorFor('district') }}</small>
+                @endif
+            </div>
+
+            <div class="form-group col-md-4 mb-2">
+                <label for="price">Price (XOF):</label>
+                <input type="number" name="price" id="price" class="form-control" value="{{ old('price', '') }}">
+                @if(hasErrorFor('price'))
+                    <small class="text-danger">{{ getErrorFor('price') }}</small>
+                @endif
+            </div>
+
+            <input type="submit" value="Add" class="btn btn-primary">
+        </form>
+            
+    </main>
+
+
+    <script>
+        const cities = {{{ toJSON(cities) }}}
+        const districts = {{{ toJSON(districts) }}}
+
+
+        function selectDistricts(){
+            const districtSelect = document.getElementById('district')
+
+            while(districtSelect.lastElementChild){
+                districtSelect.removeChild(districtSelect.lastElementChild)
+            }
+
+            const cityId = document.getElementById('city').value
+
+            if(cityId !== ""){
+                const citySelect = cities.find( city => {
+                    return cityId === city.id.toString()
+                })
+
+                districts.forEach(district => {
+                    if(district.city_id === citySelect.id){
+                        var districtOption = document.createElement('option')
+                        districtOption.setAttribute('value', district.id)
+                        districtOption.innerHTML = district.name
+                        document.getElementById('district').appendChild(districtOption) 
+                    }
+                    
+                });
+            }
+
+        }
+
+    </script>
+  
+@endsection

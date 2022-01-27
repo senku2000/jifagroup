@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    {{ style('assets/dist/css/bootstrap.min.css') }}
+
+    <title>Document</title>
+</head>
+
+<body class="text-center p-auto">
+    <section id="connexionAdmin" class="m-auto col-9 col-md-6 col-lg-4">
+
+        <div class="card">
+            <div class="row text-center">
+                <div class="col-12">
+                    <h2 class="mt-4 mb-4">Create Super User</h2>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="offset-1 col-10 text-center">
+
+                    @if(flashMessage('createError'))
+                        <span class="text-danger">{{ flashMessage('createError') }}</span>
+                    @endif
+
+                    <form action="{{ route('UserController.createSuperUser') }}" method="POST">
+                        {{ csrfField() }}
+                    
+                        <div class="form-group mb-4">
+                            <input id="username" class="form-control" placeholder="Username"
+                                type="text" name="username" value="{{ old('username', '') }}">
+                            @if(hasErrorFor('username'))
+                                <span class="text-danger">{{ getErrorFor('username') }}</span>
+                            @endif
+                        </div>
+                    
+                        <div class="form-group mb-4">
+                            <input id="email" class="form-control" placeholder="Email"
+                                type="email" name="email" value="{{ old('email', '') }}">
+                            @if(hasErrorFor('email'))
+                                <span class="text-danger">{{ getErrorFor('email') }}</span>
+                            @endif
+                        </div>
+                    
+                        <div class="form-group mb-4">
+                            <input id="password" class="form-control" placeholder="Password"
+                                    type="password" name="password">
+                            @if(hasErrorFor('password'))
+                                <span class="text-danger">{{ getErrorFor('password') }}</span>
+                            @endif
+                        </div>
+                    
+                        <button class="btn btn-primary mb-4" type="submit">
+                            <div class="col-12">
+                                Create
+                            </div>
+                        </button>
+                    
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+    
+    <footer class="footer py-1 shadow-sm fixed-bottom" style="background: #E1E7EB;">
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">© 2020 Copyright  <a href="https://jifafoundation.com" target="_blank" rel="noopener">  jifafoundation.com</a> -
+            <a href="https://jifaministry.com" target="_blank" rel="noopener"> jifaministry.com</a> - <a class="disabled" href="" target="_blank" rel="noopener">  jifagroup.net</a>
+        </div>
+        <!-- Copyright -->
+    </footer>
+
+    <script src="assets/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+
+<style>
+    html,body{
+        height: 100%;
+    }
+
+    body{
+        display: flex;
+        align-items: center;
+        background-color: #f5f5f5;
+    }
+    
+    a{
+        color: black;
+    }
+</style>

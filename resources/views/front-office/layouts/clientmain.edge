@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>JIFA GROUP | {{active}} </title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/carousel/">
+
+    <!-- Bootstrap core CSS -->                   
+    {{style('css/font-awesome.css')}}  
+    {{style('css/tailwind.min.css')}}
+    {{style('assets/dist/css/bootstrap.min.css')}}  
+    {{style('css/front-office/clientmain')}}
+
+    <style>
+      .banner{        
+        background-size: cover;
+      }
+      .text-color{
+        color:rgb(191,56,175);
+      }
+      .bg-color{ 
+        background-color: rgb(191,56,175) !important;
+      }
+      .hover-bg-color:hover{
+         background-color: white !important;
+         color: rgb(191,56,175) !important;
+         border:1px solid rgb(191,56,175) !important;
+      }
+      .border-color{ 
+        border-color: rgb(191,56,175) !important;
+        transition: .3s;
+      }
+      .hover-border-color:hover{ 
+        background-color: rgb(191,56,175) !important;
+        color: white;
+      }
+      .hover-color:hover{
+        color: rgb(191,56,175) !important;        
+      }    
+      .h-sec{
+        position: relative;
+      }  
+    .h-sec::after{
+      display: block;
+      content: "";
+      position: absolute;
+      left: 60px;
+      top: -10px;
+      z-index: -1;
+      margin: auto;
+      height: 40px;
+      width:60px;
+      border-radius: 50% 0 50% 0;
+      background-color: rgba(191,56,175,.4);
+    }
+    .h-sec::before{
+      display: block;
+      content: "";
+      position: absobottomlute;
+      right: 60px;
+      top: -10px;
+      z-index: -1;
+      margin: auto;
+      height: 40px;
+      width:60px;
+      border-radius: 0 50% 0  50% ;
+      background-color: rgba(191,56,175,.4);
+    }
+    .scroller::-webkit-scrollbar {
+            width: 4px;  
+            height: 4px;
+        }
+        /* Track */
+        .scroller::-webkit-scrollbar-track {
+            /*box-shadow: inset 0 0 5px grey;*/
+            border-radius: 8px;
+        }
+        /* Handle */
+        .scroller::-webkit-scrollbar-thumb {
+            background: rgba(191,56,175,.3);
+            border-radius: 8px;
+        }
+  </style>
+    
+</head>
+
+<body>
+
+    @if(flashMessage('alert'))
+        <span id="showAlert" class="alert-success bg-green-300 flex items-center text-green-900 mx-auto  p-2 rounded">{{{flashMessage('alert')}}}
+          <button class="h-8 w-8 border-left border-green-400 h-full transition duration-300" onclick="document.getElementById('showAlert').classList.add('hidden')"><i class="fa fa-close"></i></button>
+        </span>      
+    @endif
+    
+    
+
+    <span id="max-alert" class="hidden caret-alert bg-yellow-300 flex items-center text-yellow-900 mx-auto  p-2 rounded text-center" >
+      nombre maxium d'article different atteint
+      <button class=" h-8 w-8 border-left border-green-400 h-full  hover:bg-yellow-400 transition duration-300" onclick="document.getElementById('max-alert').classList.add('hidden')"><i class="fa fa-close"></i></button>
+    </span>
+
+    <header>
+       
+        <nav class="navbar navbar-expand-md fixed-top shadow-sm flex-col pt-0 bg-white" >
+
+         <div class="w-full bg-color text-sm" id="legacy">
+            <div class="flex justify-around text-white items-center py-2">
+              <div>IFU : <span class="font-bold text-white no-underline">3202212282757</span></div>
+              <div class="rounded-full w-max pl-2 md:pr-5 pr-2 py-2 border text-white relative z-10"><i class="fa fa-phone md:mx-3 mx-1"></i> +229 66 44 04 82</div>
+            </div>            
+         </div>
+
+          <div class="container py-2 relative" id="header-content">
+
+            <a class="text-color font-bold text-2xl no-underline hover-color" href="/">JIFA GROUP</a>
+
+            <div class="collapse navbar-collapse resp-nav md:border-none border-t  border-color" >
+
+              <ul class="navbar-nav mx-auto md:mb-2 mb-md-0 relative-left">
+                <li class="nav-item w-full md:border-none border-r border-color">                  
+                  <a class="nav-link hover-color text-color {{ (active == 'home') ?  'font-bold resp-active' : '' }}" aria-current="page" href="{{route('home')}}"><i class="fa-home fa"></i>Home</a>
+                </li>
+                <li class="nav-item w-full">                  
+                  <a class="nav-link hover-color text-color {{ (active == 'store') ?  'font-bold resp-active' : '' }}" aria-current="page" href="{{route('store')}}"><i class="fa-carret fa "></i>Store</a>
+                </li>
+              </ul>
+
+              <ul class="navbar-nav ml-auto cart items-center text-color">    
+                <li id="search" class="md:relative fixed mr-4">
+                    <i class="fa-search fa text-2xl cursor-pointer"></i>
+                </li>                     
+                <li class="nav-item text-xl">
+                  <a href="{{route('viewCaret')}}" class="nav-link text-color md:relative fixed md:bg-purple-60 z-10 hover-color" id="caret">
+                    <small>
+                      <span class="cart-text">Your cart:</span><span id="itemCount">+{{ cart.itemCount ? cart.itemCount : 0 }}</span> <span class="cart-text">item(s)</span>
+                    </small>
+                    <i class="fa fa-shopping-cart"></i>
+                  </a>
+                </li>
+              </ul>
+
+            </div>
+
+            <span id="add-caret-alert" class="caret-alert bg-green-200 flex items-center text-green-900 mx-auto  p-2 rounded" style="opacity:1;display:none;">
+            </span>
+          </div>
+
+          <div class="hidden flex bg-green-400" id="search-bars">            
+              <div  class="absolute w-screen h-screen bg-black bg-opacity-50 mx-auto pt-5 z-10" style="top:0px;left:0px;">                
+                <div class="md:w-2/3 w-4/5 mx-auto flex items-center py-2">
+                <input type="text" name="" id="search-input" class="text-center text-white md:text-2xl placeholder-white w-full h-10 bg-transparent border-1 rounded-full h-14" style="box-shadow:1px 1px 6px rgba(0,0,0,0.5);" placeholder="Rechercher un produit" autocomplete="off" >              
+                <i class="fa-close fa fa-2x text-white ml-3 cursor-pointer" id="close"></i>
+              </div>
+
+              <div class="shadow bg-gray-100 md:rounded-xl rounded p-4 md:w-2/3 w-4/5 my-3 mx-auto flex flex-col md:max-h-96 max-h-64 overflow-y-scroll">
+                <h3>Resultat Trouver</h3>
+                <div id="search-result" >
+                  <div class="m-auto text-gray-400">
+                    0 Resultat 
+                  </div>    
+                </div>   
+              </div>       
+            </div>
+          </div>
+        </nav>
+    </header>
+
+    @!section('content')
+
+    
+    <footer class="pt-5  mt-5  bg-gray-50 flex flex-col">
+        <div class="flex flex-col mx-auto mb-4 items-center">
+            <h3 class="text-lg mb-3">MOYENS DE PAIEMENT ACCEPTÉS</h3>
+            <ul class="flex">
+              <li><img src="{{assetsUrl('assets/flooz.jpg')}}" alt="" class="w-16 h-12 mx-2"></li>
+              <li><img src="{{assetsUrl('assets/momo.png')}}" alt="" class="w-16 h-12 mx-2"></li>
+            </ul>
+        </div>
+        <div class="flex md:flex-row flex-col justify-around items-center mb-3 md:w-2/3 mx-auto">
+          <div class="flex flex-col items-start">
+            <h3 class="text-color text-xl">CONTACT INFO</h3>
+            <ul class="p-0">
+              <li class="my-2"><i class="mr-2 fa-map fa"></i>Apkapka sacre coeur</li>
+              <li class="my-2"><i class="mr-2 fa-phone fa"></i>+229 90 82 11 98</li>
+              <li class="my-2"><i class="mr-2 fa-envelope-o fa"></i>contact@jifagroup.com</li>
+            </ul>
+          </div>
+           <div class="flex flex-col items-start ">
+            <h3 class="text-color text-xl">CATEGORIES</h3>
+            <ul class="p-0">
+              @each(category in categories) 
+                <li class="my-2"><a class="hover:text-green-500 no-underline text-black transition duration-300" href="{{route('store',{category_id: category.id}) }}" >{{category.name}}</a></li>
+              @else
+              @endeach
+             
+            </ul>
+          </div>
+
+          <div class="flex flex-col items-start">
+            <h3 class="text-color text-xl">A PROPOS</h3>
+            <ul class="p-0">
+              <li class="my-2"><a href="" class="hover:text-green-500 no-underline text-black transition duration-300">Politique de confidentialité</a></li>
+              <li class="my-2"><a href="" class="hover:text-green-500 no-underline text-black transition duration-300">Condition générale de vente</a></li>
+              <li class="my-2"><a href="" class="hover:text-green-500 no-underline text-black transition duration-300">Politique de retours</a></li>           
+            </ul>
+          </div>
+
+          
+        </div>
+
+       
+    </footer>
+    {{script('assets/dist/js/bootstrap.bundle.min.js')}}    
+    {{script('js/api/api')}}
+    {{ script('js/jquery-3.4.1.min') }}
+    {{script('js/autoComplete.js/dist/js/autoComplete')}}
+
+    
+    <script>    
+            
+      (() => {
+            
+           $(window).on('scroll', function() {             
+              if ($("#legacy").offset().top > 10) {
+                $("#legacy").addClass("hidden");
+                console.log($('#header-content').offset().top)
+              }
+              
+              if($('#header-content').offset().top <=10 ){
+                $("#legacy").removeClass("hidden");
+              }
+          });
+
+          $('#search').click(() => {            
+              $('#search-bars').removeClass('hidden')
+              $('#search-bars').addClass('container')
+          });
+
+          $('#close').click(() => {
+              $('#search-bars').addClass('hidden')
+              $('#search-input').val('')
+              $('#search-result').html('<div class="m-auto text-gray-400">0 Resultat</div>')
+              $('#search-bars').removeClass('container')
+              $('#header-content').removeClass('hidden')
+              $('#header-content').addClass('container')        
+          })
+
+          
+      })();
+
+      (async function () {                                                       
+            try{
+              
+              let ProductApi = new Api("{{route('api_get_products')}}"), products = await ProductApi.get();                 
+              $('#search-input').keyup( async (e) => {
+                let display_result = document.getElementById('search-result')
+
+                if(e.target.value !== ""){
+                    
+                      result = products.filter( el => {
+                          if (el.name.toLowerCase().includes(e.target.value.toLowerCase()))
+                                  return true
+                      }) 
+                    
+
+                    if(result.length){
+
+                      display_result.innerHTML = ""
+
+                      for(i in result){           
+                        display_result.innerHTML += '<a class="block hover:bg-red-100 hover-color rounded-lg p-3 no-underline text-gray-600" href="/view-product/'+result[i].id+'">'+result[i].name+'<i class="fa fa-share float-right"></i></a>'
+                      }
+
+                    }
+                }else{ 
+                  display_result.innerHTML = '<div class="m-auto text-gray-400">0 Resultat</div>'
+                }
+              })
+            }catch(e){ 
+              console.log(e)
+            }
+
+            
+                      
+      }());
+
+      async function func(product_id) {
+
+          try {
+
+              //$('#caret').removeClass('bounce')
+
+              let addToCaretApi = new Api("{{route('addToCaret')}}")
+
+              let itemCount = null
+              let msg = ''
+
+              result = await addToCaretApi.get({ id: product_id })
+
+              if (result.itemCount === "error") {
+                  msg = 'non ajouter au panier !'
+
+              } else if (result.itemCount === "max_items") {
+                  document.getElementById('max-alert').classList.remove('hidden')
+
+              } else if (result.itemCount) {
+                  msg = '<strong>'+result.prodName+'</strong>'+' ajouté au panier'
+                  document.getElementById("itemCount").innerText = '+' + result.itemCount
+              }
+
+              let caret_alert = document.getElementById('add-caret-alert')
+              caret_alert.innerHTML = msg
+
+              //$('#caret').addClass('bounce')
+
+              caret_alert.style.display = 'block'
+
+              anim();
+
+          } catch (e) {
+              console.log(e)
+          }
+      }
+
+      async function anim() {
+
+          let s = document.getElementById('add-caret-alert').style
+          let result = s.opacity = parseFloat(s.opacity) - 0.1;
+          if (result > 0) {
+              setTimeout(anim, 500);
+
+          } else {
+              s.display = 'none'
+              s.opacity = 1
+          }
+      }
+
+        
+    </script>
+</body>
+
+</html>

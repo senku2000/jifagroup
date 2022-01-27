@@ -1,0 +1,73 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>{{ city.name }} update</h5>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('cities') }}">
+                  Go back
+                </a>
+            </div>
+        </div>
+
+        <form action="" method="post">
+            {{ csrfField() }}
+
+            <div class="input-group">
+                <input class="form-control" type="text" name="name" id="name" placeholder="City" value="{{ city.name }}">
+                <input type="submit" value="Update" class="btn btn-secondary btn-sm">
+            </div>
+            @if(hasErrorFor('name'))
+                <small class="text-danger">{{ getErrorFor('name') }}</small>
+            @endif
+        </form>
+
+        <hr>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>Districts of {{ city.name }}</h5>
+
+            <form id="addDistrictForm" action="{{ route('adminAddDistrict') }}" method="post">
+                {{ csrfField() }}
+
+                <div class="input-group">
+                    <input class="form-control" placeholder="District name's" type="text" name="name"
+                            value="{{ old('name', '') }}">
+                    <input type="button" value="Add district" class="btn btn-secondary btn-sm"
+                            onclick="addDistrict()">
+                </div>
+                
+                @if(hasErrorFor('name'))
+                    <small class="text-danger">{{ getErrorFor('name') }}</small>
+                @endif
+            </form>
+
+        </div>
+
+        @include('admin/zones/districts-list')
+
+    </main>
+
+
+    <script>
+        const city = {{{ toJSON(city) }}}
+
+        function addDistrict(){
+            const cityIdInput = document.createElement('input')
+            cityIdInput.setAttribute('type', 'number')
+            cityIdInput.setAttribute('name', 'city_id')
+            cityIdInput.setAttribute('value', city.id)
+            document.getElementById('addDistrictForm').appendChild(cityIdInput)
+            document.getElementById('addDistrictForm').submit()
+        }
+
+    </script>
+  
+@endsection

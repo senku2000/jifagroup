@@ -1,0 +1,43 @@
+@layout('front-office/layouts/clientmain')
+@section('content')
+
+    <div class="album">
+        <div class="container mt-5 pt-5">
+            
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3  ">                                                                                   
+              <div class="mx-auto pt-5 mt-3">
+                    @component('front-office/components/prodCard',{product:product  })                  
+                    @endcomponent    
+              </div>                                      
+            </div>
+                
+        </div>
+
+        <section class="container mt-4">      
+            <div class="col-lg-6 col-md-8">
+                <h1 class="h1-large">Dans la même categorie</h1>
+                <div class="h-1 bg-color" style="width:15%;"></div>          
+            </div>      
+        </section>
+
+        <div class="album py-5">
+            <div class="container">
+
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                
+                    @each(product in products)
+                        @component('front-office/components/prodCard',{product:product})                  
+                        @endcomponent
+                    @else
+                    <div class="m-auto text-center">
+                        Aucun nouveau produit
+                    </div>
+                    @endeach                                                         
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+ 
+@endsection

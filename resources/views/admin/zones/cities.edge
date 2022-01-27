@@ -1,0 +1,142 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <form id="addCityForm" class="mt-4" action="{{ route('adminAddCity') }}" method="post">
+            {{ csrfField() }}
+
+            <div class="d-flex align-items-center ">
+
+                <div class="input-group">
+                    <h6 class="mr-2" for="name">City's name :</h6>
+                    <input class="form-control" placeholder="Ex: Cotonou" type="text"
+                            name="name" value="{{ old('name', '') }}" >
+                    <input type="submit" class="btn btn-secondary" value="Add">
+                </div>
+                    
+                @if(hasErrorFor('name'))
+                    <small class="text-danger">{{ getErrorFor('name') }}</small>
+                @endif
+                
+            </div>
+        </form>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-12">
+                <p class="form-inline float-left mr-2">
+                    Actions for select :
+                </p>
+                <div class="form-inline btn-group float-left">
+                    <button class="btn btn-outline-secondary btn-sm" onclick="select('deleteCities')">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <form id="actionForm" action="" method="post">
+                {{ csrfField() }}
+
+                <table id="allZones" class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Select</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Created at</th>
+                            <th scope="col">Updated at</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @each(city in cities)
+                          <tr>
+                              <td>
+                                  <span>
+                                      <input type="checkbox" name="{{ city.id }}" id="{{ city.id }}">
+                                  </span>
+                              </td>
+                              
+                              <td>{{ city.name }}</td>
+                              <td>{{ city.created_at }}</td>
+                              <td>{{ city.updated_at }}</td>
+
+                              <td class="d-flex">
+                                <a type="button" class="btn btn-outline-primary btn-sm mr-4"
+                                    href="{{ route('adminUpdateCity', {id: city.id}) }}">
+                                  <i class="fa fa-edit"></i>
+                                </a>
+    
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                        onclick="deleteCity({{ city.id }})">
+                                  <i class="fa fa-trash"></i>
+                                </button>
+    
+                              </td>
+                          </tr>
+                        @endeach
+                    </tbody>
+
+                </table>
+            </form>
+        </div>
+
+    </main>
+
+
+    <script>
+        const cities = {{{ toJSON(cities) }}}
+
+        function deleteCity(cityId){
+            const cityToDelete = cities.find( city => {
+                return cityId === city.id
+            })
+            var onDelete = confirm("If you delete "+cityToDelete.name+", all districts and delivery prices of "+cityToDelete.name
+                                    +" will be deleted. Are you sure to delete "+cityToDelete.name+" ?")
+    
+            if(onDelete){
+                location.replace('/admin/zones/city/delete/'+cityToDelete.id)
+            }
+        }
+
+
+        function select(action){
+            const cityId = []
+
+            cities.forEach(city => {
+                const ok = document.getElementById(city.id).checked === true
+                if(ok){
+                    cityId.push(city.id)
+                }
+            });
+
+            if(cityId.length > 0){
+                let on
+
+                if(action === "deleteCities"){
+                    on = confirm("Are you sure to delete, the "+cityId.length
+                                    +" cities selected and all their districts and delivery prices ?")
+                }
+
+                if(on){
+                    var x = document.createElement("input")
+                    x.setAttribute("type", "text")
+                    x.setAttribute("name", "action")
+                    x.setAttribute("value", action)
+                    document.getElementById("actionForm").appendChild(x)
+                    document.getElementById("actionForm").submit();
+                }
+
+            }else{
+                alert("No cities are selected !")
+            }
+        }
+
+    </script>
+  
+@endsection

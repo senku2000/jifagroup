@@ -1,0 +1,67 @@
+
+@layout('admin/main')
+
+@section('content')
+
+  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+      <h1 class="h2">Products</h1>
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary mr-2" href="{{ route('addProduct') }}">
+          Add product <i class="fa fa-plus"></i>
+        </a>
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('categories') }}">
+          Add category <i class="fa fa-plus"></i>
+        </a>
+      </div>
+
+    </div>
+
+    @if(old('successNotif'))
+      <h6 class="alert alert-success">
+        {{ old('successNotif')}}
+      </h6>
+    @endif
+
+    @if(old('errorNotif'))
+      <div class="alert alert-danger">
+        {{ old('errorNotif')}}
+      </div>
+    @endif
+
+
+    <ul class="nav nav-tabs">
+
+      <li class="nav-item">
+        <a id="all" class="btn nav-link {{ (code === 'all')? 'active': ''}}"
+            href="{{ route('products', {code: 'all'})}}">
+          <strong>All Products</strong>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a id="onStore" class="btn nav-link {{ (code === 'onStore')? 'active': ''}}"
+            href="{{ route('products', {code: 'onStore'})}}">
+          <strong>On store</strong>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a id="notOnStore" class="btn nav-link {{ (code === 'notOnStore')? 'active': ''}}"
+            href="{{ route('products', {code: 'notOnStore'})}}">
+          <strong>Not on store</strong>
+        </a>
+      </li>
+
+    </ul>
+
+    @include('admin/include/products')
+
+  </main>
+
+@endsection
+
+

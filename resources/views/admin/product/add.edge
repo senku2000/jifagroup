@@ -1,0 +1,121 @@
+@layout('admin/main')
+
+@section('content')
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+      <h1 class="h2">Products</h1>
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary mr-2" href="{{ route('categories') }}">
+            <i class="fa fa-plus"></i>
+            Add category 
+        </a>
+        <a type="button" class="btn btn-sm btn-outline-secondary"
+                href="{{ referer }}">
+            <i class="fa fa-back"></i>
+            Go Back 
+        </a>
+      </div>
+
+    </div>
+
+    <div class="col-md-10 m-auto">
+
+        @if(old('errorNotif'))
+            <div class="alert alert-danger">
+                {{ old('errorNotif')}}
+            </div>
+        @endif
+
+        <div class="card mt-4 mb-4">
+
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <h4 class="mt-4 mb-4">New Product</h4>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-9 m-auto">
+
+                    <form action="{{ route('ProductController.adminAdd') }}" method="POST">
+                        {{ csrfField() }}
+
+                        <div class="row">
+
+                            <div class="col-md-12 mb-4 form-group">
+                                <h6 for="name">Category :</h6>
+                                <select class="form-select" aria-label="Default select example"
+                                        name="category_id">
+                                    <option value="" selected>Choose product's category</option>
+                                    @each(category in categories)
+                                        <option value="{{ category.id }}">{{ category.name}}</option>
+                                    @endeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 mb-4 form-group">
+                                <h6 for="name">Name :</h6>
+                                <input class="form-control" placeholder="Ex: Banane" type="text"
+                                        name="name" value="{{ old('name', '') }}" >
+                                @if(hasErrorFor('name'))
+                                    <small class="text-danger">{{ getErrorFor('name') }}</small>
+                                @endif
+                            </div>
+
+                            <div class="col-md-12 mb-4 form-group">
+                                <h6 for="description">Description :</h6>
+                                <textarea placeholder="Describe product here" class="form-control" rows="5"
+                                            name="description">{{ old('description', '') }}</textarea>
+                                @if(hasErrorFor('description'))
+                                    <small class="text-danger">{{ getErrorFor('description') }}</small>
+                                @endif
+                            </div>
+
+                            <div class="col-md-4 mb-4 form-group">
+                                <h6 for="price">Price FCFA:</h6>
+                                <input class="form-control" placeholder="Ex: 1000"
+                                        type="number" min="0" value="{{ old('price', 0) }}"
+                                        name="price">
+                                @if(hasErrorFor('price'))
+                                    <small class="text-danger">{{ getErrorFor('price') }}</small>
+                                @endif
+                            </div>
+
+                            <div class="col-md-6 mb-4 form-group">
+                                <h6 for="quantity">Available quantity :</h6>
+                                <input class="form-control" placeholder="Ex: 100"
+                                        type="number" min="0" value="{{ old('quantity', 0) }}" name="quantity">
+                                @if(hasErrorFor('quantity'))
+                                    <small class="text-danger">{{ getErrorFor('quantity') }}</small>
+                                @endif
+                            </div>
+
+                        </div>
+
+                        <div class="dropdown-divider"></div>
+
+                        <div class="row text-center my-4">
+                            <div class="col-12 text-center m-auto">
+                                <button class="btn btn-primary m-auto" type="submit">
+                                    Create
+                                </button>
+                                <br>
+                                <small class="text-danger text-center mt-4"></small>
+                            </div>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+@endsection
+
+

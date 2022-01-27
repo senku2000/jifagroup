@@ -1,0 +1,73 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+            <h1 class="h2">Categories</h1>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary mr-2" href="{{ route('addProduct') }}">
+                    Add product <i class="fa fa-plus"></i>
+                </a>
+                <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('categories') }}">
+                    <i class="fa fa-back"></i>
+                    Go Back 
+                </a>
+            </div>
+
+        </div>
+
+        <hr>
+
+        @if(old('successNotif'))
+            <h6 class="alert alert-success">
+                {{ old('successNotif')}}
+            </h6>
+        @endif
+
+        @if(old('errorNotif'))
+            <div class="alert alert-danger">
+                {{ old('errorNotif')}}
+            </div>
+        @endif
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>{{ category.name }} update</h5>
+        </div>
+
+        <div class="row">
+            <form class="card offset-1 offset-md-3 col-10 col-md-6 p-4"
+                    action="{{ route('updateCategory', {id: category.id}) }}" method="POST">
+                {{ csrfField() }}
+        
+                <div class="form-group my-2">
+                    <label class="my-2" for="name">Category's name :</label>
+                    <input class="form-control" placeholder="Ex: Fruits" type="text"
+                            name="name" value="{{ category.name }}" >
+                    @if(hasErrorFor('name'))
+                        <small class="text-danger">{{ getErrorFor('name') }}</small>
+                    @endif
+                </div>
+    
+                <div class="form-group my-2">
+                    <button type="submit" class="btn btn-secondary">Update</button>
+                </div>
+    
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>Products of {{ category.name }}</h5>
+        </div>
+          
+        @include('admin/include/products')
+
+    </main>
+@endsection

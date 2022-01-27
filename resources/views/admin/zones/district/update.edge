@@ -1,0 +1,123 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>{{ district.name }} update</h5>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('adminDistricts') }}">
+                  Go back
+                </a>
+            </div>
+        </div>
+
+        <form action="" method="post">
+            {{ csrfField() }}
+
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="city">City :</label>
+                    <select class="form-select" aria-label="Default select example"
+                        name="city_id">
+                        <option>Choose city</option>
+                        @each(city in cities)
+                            <option value="{{ city.id }}" {{(city.id===district.city_id)? 'selected': ''}}>
+                                {{ city.name}}
+                            </option>
+                        @endeach
+                    </select>
+                    @if(hasErrorFor('city_id'))
+                        <small class="text-danger">{{ getErrorFor('city_id') }}</small>
+                    @endif
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label for="district">District :</label>
+                    <input class="form-control" type="text" name="name" id="name" placeholder="District"
+                        value="{{ district.name }}">
+                    @if(hasErrorFor('name'))
+                        <small class="text-danger">{{ getErrorFor('name') }}</small>
+                    @endif
+                </div>
+            </div>
+
+            <input type="submit" value="Update" class="btn btn-secondary btn-sm">
+            
+        </form>
+
+        <hr>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+            <h5>Delivery price of {{ district.name }}</h5>
+
+        </div>
+
+        @if(deliveryPrice)
+            <form action="{{ route('adminUpdateDeliveryPrice', {id: deliveryPrice.id} ) }}" method="post">
+                {{ csrfField() }}
+
+                <input type="hidden" name="city" value="{{district.city_id}}">
+                <input type="hidden" name="district" value="{{district.id}}">
+
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input class="form-control" type="number" name="price" id="price"
+                                    value="{{deliveryPrice.price}}">
+                            <button type="submit" class="btn btn-sm btn-secondary">
+                                <i class="fa fa-refresh"> Update delivery price</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        @else
+            <form action="{{ route('adminAddDeliveryPrice') }}" method="post">
+                {{ csrfField() }}
+
+                <input type="hidden" name="city" value="{{district.city_id}}">
+                <input type="hidden" name="district" value="{{district.id}}">
+
+                <div class="form-row">
+                    
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input class="form-control" type="number" name="price" id="price">
+                            <button type="submit" class="btn btn-sm btn-secondary">
+                                <i class="fa fa-plus"> Add delivery price</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        @endif
+        
+
+    </main>
+
+
+    <script>
+        const city = {{{ toJSON(city) }}}
+
+        function addDistrict(){
+            const cityIdInput = document.createElement('input')
+            cityIdInput.setAttribute('type', 'number')
+            cityIdInput.setAttribute('name', 'city_id')
+            cityIdInput.setAttribute('value', city.id)
+            document.getElementById('addDistrictForm').appendChild(cityIdInput)
+            document.getElementById('addDistrictForm').submit()
+        }
+
+    </script>
+  
+@endsection

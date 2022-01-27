@@ -1,0 +1,120 @@
+
+@layout('front-office.layouts.checkout')
+@section('content')
+    <style>
+        @media screen and (max-width:910px){
+            img{
+                height: 100px !important;
+                width: 100px !important;
+            }
+            .cart{
+                font-size: 0.9em;
+                 min-width: 300px !important;
+            }
+        }
+        
+    </style>
+    <div class="md:w-2/3 sm:w-11/12 w-full mx-auto mb-4 lg:p-5 p-4 max-h-car bg-white">         
+        <div class="flex justify-between mb-2  items-center">
+            <a href="{{route('store')}}"
+                class="hover:text-green-500 text-color text-center no-underline px-3 py-2 md:hidden"
+                >               
+                <i class="fa-arrow-circle-left fa fa-2x"></i> 
+            </a>
+            <h1 class="font-bold text-xl">Votre panier</h1>
+            <a href="{{route('store')}}" 
+                class="md:block hidden bg-color text-white shadow flex items-center no-underline px-3 py-2 transition duration-400 hover:bg-green-300"
+                >
+                <i class="fa-angle-left fa mr-2"></i>
+                Revenir au store
+            </a>
+             
+        </div>
+        <section class="md:w-5/6 sm:w-11/12 w-full sm:mx-auto my-4 md:px-2">
+            @each(cart_line in cart_lines)
+            <div class="cart flex justify-between items-center my-3 shadow-color p-2 bg-white" id="{{cart_line.id}}">
+                <div class="flex justify-between items-center md:w-1/2 w-max">                       
+                    
+                    <img src="{{assetsUrl(cart_line.img)}}" class="w-36 h-36" styl="width:225px;height:125px;">
+
+                    <div class="flex flex-col  w-full sm:mx-3 mx-2">
+                        <h6 class="font-bold ">{{cart_line.name}}</h6>                        
+                        <span class="flex items-center my-2">
+                            
+                            <span id="qte"  class="sm:w-16 w-12 border rounded-lg bg-transparent">{{cart_line.quantity}} qte</span>
+                            <div class="flex">
+                                 <button class="btn-sm border border-green-500 btn-outline-success w-7 sm:mx-2" onclick="addQuantity('{{cart_line.id}}')">+</button>
+                                 <button class="btn-sm border border-red-500 btn-outline-danger w-7" onclick="decreaseQuantity('{{cart_line.id}}')" {{cart_line.quantity > 1 ? '' : 'disabled'}}>-</button>                                 
+                            </div>
+                        </span>
+                        <div class="w-full">
+                            <span class="font-bold">Total</span> : {{cart_line.price}} FCFA                                
+                        </div>
+                    </div>
+
+                </div> 
+
+                <button type="button" onclick="delFromCart('{{cart_line.id}}')"
+                        class=" sm:p-2 p-1 border-1 border-color text-color rounded md:mr-5 hover:bg-red-100 transition duration-300"
+                    >
+                    Suppr.
+                </button>           
+
+            </div>
+            @else
+                    Aucun Produit dans votre panier
+            @endeach
+        </section>
+        <div class="flex flex-col items-center">
+            <div><span class="font-bold">Grand Total</span> : {{ cart.cartPrice ? cart.cartPrice : 0 }} FCFA </div>            
+            <span id="csrf">{{ csrfField() }}</span>
+            <a href="{{cart.cartPrice > 0 ? route('delivry_addressView') : '#'}}"
+               class="block w-60 px-4 py-3 text-center text-white bg-color font-bold mx-auto my-4 no-underline shadow transition duration-400 hover:bg-green-300"
+                >                
+                Passer la commande
+                <i class="fa fa-shopping-cart"></i>
+            </a>
+        </div>        
+    </div>
+    {{ script('js/api/api') }} 
+    <script>
+           
+                async function delFromCart(id){
+                     
+                    try{
+                        let delProdApi = new Api("{{route('delFromCart')}}")
+                        let csrf = document.getElementById("csrf").childNodes[0] 
+                        //console.log('enableCart')
+                        await delProdApi.post({id: id , _csrf : csrf.value})                       
+                        document.getElementById(id).innerHTML = ""
+                        window.location.reload()
+                    }catch(e){
+                        console.log(e)
+                    }             
+                                    
+                }
+
+                async function addQuantity(id){ 
+                    try {
+                        let addApi = new Api("{{route('addQuantity')}}")
+                        let csrf = document.getElementById("csrf").childNodes[0]
+                        await addApi.post({id: id , _csrf: csrf.value}) 
+                        window.location.reload()
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+
+                async function decreaseQuantity(id){
+                    try {
+                        let decreaseApi = new Api("{{route('decreaseQuantity')}}")
+                        let csrf = document.getElementById("csrf").childNodes[0]
+                        await decreaseApi.post({id: id , _csrf: csrf.value })
+                        window.location.reload()
+                    } catch (error) {
+                        console.log(error)
+                    }
+                }
+           
+        </script>    
+@endsection

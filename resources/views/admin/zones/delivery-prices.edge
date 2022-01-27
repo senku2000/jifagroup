@@ -1,0 +1,197 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <div class="row py-auto mt-3">
+            <div class="col">
+                <div class="form-inline foat-left">
+                    <select name="filter" id="filter" class="">
+                        <option value="recently">Recently</option>
+                        <option value="noMatter">No matter</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group form-inline float-right">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('adminAddDeliveryPrice') }}">
+                        <i class="fa fa-plus">Add delivery price</i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        @if(deliveryPrices.length > 0)
+
+            <div class="row">
+                <div class="col-12">
+                    <p class="form-inline float-left mr-2">
+                        Actions for select :
+                    </p>
+                    <div class="form-inline btn-group float-left">
+                        <button class="btn btn-outline-secondary btn-sm" onclick="select('deleteDeliveryPrices')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <form id="actionForm" action="" method="post">
+                    {{ csrfField() }}
+
+                    <table id="allZones" class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Select</th>
+                                <th scope="col">City</th>
+                                <th scope="col">District</th>
+                                <th scope="col">Delivery Price (XOF)</th>
+                                <th scope="col">Created at</th>
+                                <th scope="col">Updated at</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @each(deliveryPrice in deliveryPrices)
+                                <tr>
+                                    <td>
+                                        <span>
+                                            <input type="checkbox" name="{{ deliveryPrice.id }}"
+                                                    id="{{ deliveryPrice.id }}">
+                                        </span>
+                                    </td>
+                                    <td>{{ deliveryPrice.city.name }}</td>
+                                    <td>{{ deliveryPrice.district.name }}</td>
+                                    <td class="text-right">
+                                        <div class="input-group">
+                                            <input type="number" name="price"
+                                                    id="priceInput{{deliveryPrice.id}}"
+                                                    value="{{ deliveryPrice.price }}">
+                                            <button class="btn btn-sm btn-outline-secondary" type="button"
+                                                    onclick="updateDeliveryPrice({{deliveryPrice.id}})">
+                                                <i class="fa fa-refresh"></i>
+                                            </button>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>{{ deliveryPrice.created_at }}</td>
+                                    <td>{{ deliveryPrice.updated_at }}</td>
+
+                                    <td class="d-flex">
+
+                                        <button type="button" class="btn btn-outline-danger btn-sm"
+                                                onclick="deleteDeliveryPrice({{deliveryPrice.id}})">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+
+                                    </td>
+                                    
+                                </tr>
+                            @endeach
+                        </tbody>
+
+                    </table>
+                </form>
+            </div>
+
+        @else
+            <p>No districts</p>
+        @endif
+
+    </main>
+
+
+    <script>
+        const deliveryPrices = {{{ toJSON(deliveryPrices) }}}
+
+
+        function deleteDeliveryPrice(deliveryPriceId){
+            const deliveryPriceToDelete = deliveryPrices.find( deliveryPrice => {
+                    return deliveryPriceId === deliveryPrice.id
+            })
+
+            var onDelete = confirm("Are you sure to delete delivery price of "
+                                    +deliveryPriceToDelete.city.name+" "
+                                    +deliveryPriceToDelete.district.name+" ?")
+
+            if(onDelete){
+                location.replace('/admin/zones/delivery-price/delete/'+deliveryPriceToDelete.id)
+            }
+        }
+
+
+        function updateDeliveryPrice(deliveryPriceId){
+            const deliveryPriceToUpdate = deliveryPrices.find( deliveryPrice => {
+                    return deliveryPriceId === deliveryPrice.id
+            })
+
+            var onUpdate = confirm("Are you sure to update delivery price of "
+                                    +deliveryPriceToUpdate.city.name+" "
+                                    +deliveryPriceToUpdate.district.name+" ?")
+
+            if(onUpdate){
+                const price = document.getElementById('priceInput'+deliveryPriceToUpdate.id).value
+
+                var actionInput = document.createElement("input")
+                actionInput.setAttribute("type", "text")
+                actionInput.setAttribute("name", "action")
+                actionInput.setAttribute("value", 'updateDeliveryPrice')
+                document.getElementById("actionForm").appendChild(actionInput)
+
+                const priceInput = document.createElement('input')
+                priceInput.setAttribute('type', 'number')
+                priceInput.setAttribute('name', 'newPrice')
+                priceInput.setAttribute('value', price)
+                document.getElementById("actionForm").appendChild(priceInput)
+
+                const deliveryPriceInput = document.createElement('input')
+                deliveryPriceInput.setAttribute('type', 'number')
+                deliveryPriceInput.setAttribute('name', 'deliveryPriceId')
+                deliveryPriceInput.setAttribute('value', deliveryPriceToUpdate.id)
+                document.getElementById('actionForm').appendChild(deliveryPriceInput)
+
+                document.getElementById('actionForm').submit()
+
+            }
+        }
+
+
+        function select(action){
+            const deliveryPricesId = []
+
+            deliveryPrices.forEach(deliveryPrice => {
+                const ok = document.getElementById(deliveryPrice.id).checked === true
+                if(ok){
+                    deliveryPricesId.push(deliveryPrice.id)
+                }
+            });
+
+            if(deliveryPricesId.length > 0){
+                let on
+
+                if(action === "deleteDeliveryPrices"){
+                    on = confirm("Are you sure to delete, the "+deliveryPricesId.length
+                                    +" delivery prices selected ?")
+                }
+
+                if(on){
+                    var x = document.createElement("input")
+                    x.setAttribute("type", "text")
+                    x.setAttribute("name", "action")
+                    x.setAttribute("value", action)
+                    document.getElementById("actionForm").appendChild(x)
+                    document.getElementById("actionForm").submit();
+                }
+
+            }else{
+                alert("No delivery prices are selected !")
+            }
+        }
+
+    </script>
+  
+@endsection

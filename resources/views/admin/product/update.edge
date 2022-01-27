@@ -1,0 +1,255 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center
+                    pt-3 pb-2 mb-3 border-bottom">
+
+            <h1 class="h2">Products</h1>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary mr-2" href="{{ route('addProduct') }}">
+                    <i class="fa fa-plus"></i>
+                    Add product
+                </a>
+
+                <a type="button" class="btn btn-sm btn-outline-secondary mr-2" href="{{ route('categories') }}">
+                    <i class="fa fa-plus"></i>
+                    Add category
+                </a>
+
+                <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('products', {code: 'all'}) }}">
+                    <i class="fa fa-undo"></i>
+                    Go Back 
+                </a>
+            </div>
+
+        </div>
+
+        @if(old('successNotif'))
+            <h6 class="alert alert-success">
+                {{ old('successNotif')}}
+            </h6>
+        @endif
+
+        @if(old('errorNotif'))
+            <div class="alert alert-danger">
+                {{ old('errorNotif')}}
+            </div>
+        @endif
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+            <h6> ID : {{product.id}} </h6>
+            <h5>{{product.name}} </h5>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-group me-2">
+
+                    @if(product.onStore)
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="offStore()">
+                            <i class="fa fa-minus"></i>
+                            <i class="fa fa-shopping-bag"></i>
+                            Remove from store
+                        </button>
+                    @else
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="onStore()">
+                            <i class="fa fa-plus"></i>
+                            <i class="fa fa-shopping-bag"></i>
+                            Put on store
+                        </button>
+                    @endif
+                    
+
+                    <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deleteProduct()">
+                        <i class="fa fa-trash"></i>
+                        Delete
+                    </button>
+                  
+                </div>
+                @if(product.onStore)
+                    <a type="button" class="btn btn-sm btn-outline-secondary disabled">
+                        <i class="fa fa-eye"></i>
+                        View on site
+                    </a>
+                @else
+                    <a type="button" class="btn btn-sm btn-outline-secondary disabled">
+                        Preview
+                    </a>
+                @endif
+                
+            </div>
+
+        </div>
+
+        
+        <div class="row">
+            <div class="card col-md-8 m-auto">
+
+                <div class="row m-4">
+                    <div class="col-md-12">
+                        @if(product.imageUrl)
+                          <img src="{{ assetsUrl(product.imageUrl) }}" alt="" class="col-md-4 m-auto">
+                        @else
+                            <p>Not image added</p>
+                        @endif
+                        
+                    </div>
+
+                    <div class="col-md-4 col-lg-3">
+                        <img class="d-block absolute img-fluid image" [src]="image">
+                    </div>
+
+                </div>
+
+                <hr>
+
+                <div class="row mx-2">
+                    <form action="{{ route('uploadProductImage', {id: product.id}) }}" method="POST"
+                            enctype="multipart/form-data">
+                        {{ csrfField() }}
+
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center
+                                    pt-3 pb-2 mb-3 border-bottom">
+
+                            <input type="file" class="form-control-file" accept="image/*" name="image">
+
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <div class="btn-group me-2">
+                                    @if(product.imageUrl)
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            Upload to change
+                                        </button>
+                                        <a id="removeProductImage" type="button"
+                                                class="btn btn-sm btn-outline-secondary"
+                                                onclick="removeProductImage()">
+                                            Remove
+                                        </a>
+                                    @else
+                                        <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                            Upload
+                                        </button>
+                                    @endif
+                                    
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+
+                <hr>
+
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="card my-4 col-md-11 m-auto">
+                <form action="{{ route('updateProduct', {id: product.id}) }}" method="POST">
+                    {{ csrfField() }}
+
+                    <div class="row m-4">
+                        <div class="form-group col-md-12 mb-4">
+                            <h6 for="name">Category :</h6>
+                            <select id="category_id" class="form-select" aria-label="Default select example"
+                                    name="category_id">
+                                @each(category in categories)
+                                    <option value="{{ category.id }}">
+                                        {{ category.name}}
+                                    </option>
+                                @endeach
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12 mb-4">
+                            <h6>Name :</h6>
+                            <input class="form-control" type="text" value="{{ product.name }}"
+                                    name="name">
+                            @if(hasErrorFor('name'))
+                                <small class="text-danger">{{ getErrorFor('name') }}</small>
+                            @endif
+                        </div>
+
+                        <div class="form-group col-md-12 mb-4">
+                            <h6>Description :</h6>
+                            <textarea placeholder="Describe product here" class="form-control text-justity"
+                                        rows="5" name="description">{{ product.description }}</textarea>
+                            @if(hasErrorFor('description'))
+                                <small class="text-danger">{{ getErrorFor('description') }}</small>
+                            @endif
+                        </div>
+                        
+                        <div class="form-group col-md-3 mb-4">
+                            <h6>Price (FCFA) :</h6>
+                            <input class="form-control" type="number" min="0" value="{{ product.price }}"
+                                    name="price">
+                            @if(hasErrorFor('price'))
+                                <small class="text-danger">{{ getErrorFor('price') }}</small>
+                            @endif
+                        </div>
+
+                        <div class="form-group col-md-6 mb-4">
+                            <h6>Available quantity :</h6>
+                            <input class="form-control" type="number" min="0" value="{{ product.quantity }}"
+                                    name="quantity">
+                            @if(hasErrorFor('price'))
+                                <small class="text-danger">{{ getErrorFor('price') }}</small>
+                            @endif
+                        </div>
+                        
+                    </div>
+
+                    <div class="dropdown-divider m-4"></div>
+
+                    <div class="row m-4">
+                        <div class="form-group col-md-8 m-auto text-center">
+                            <button class="btn btn-primary mx-auto" type="submit">
+                                Update
+                            </button>
+                        </div>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const category_id = {{{ toJSON(product.category_id) }}}
+
+        document.getElementById("category_id").value = category_id
+
+        function onStore(){
+            var onPut = confirm("Are you sure to put {{ product.name }} on store ?")
+            if(onPut){
+                location.replace("{{ route('onStore', {id: product.id}) }}")
+            }
+        }
+
+        function offStore(){
+            var onRemove = confirm("Are you sure to remove {{ product.name }} from the store ?")
+            if(onRemove){
+                location.replace("{{ route('offStore', {id: product.id}) }}")
+            }
+        }
+
+        function deleteProduct(){
+            var onDelete = confirm("Are you sure to delete {{product.name}} ?")
+            if(onDelete){
+                location.replace("{{ route('deleteProduct', {id: product.id}) }}")
+            }
+        }
+
+        function removeProductImage(){
+            var onDelete = confirm("Are you sure to remove image of {{ product.name }} ?")
+            if(onDelete){
+                location.replace("{{ route('removeProductImage', {id: product.id}) }}");
+            }
+        }
+    </script>
+        
+@endsection

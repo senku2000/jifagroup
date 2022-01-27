@@ -1,0 +1,152 @@
+@layout('front-office/layouts/checkout')
+@section('content')
+
+<div class="flex md:flex-row flex-col md:items-start items-center">
+
+    <div class="md:w-1/3 w-full p-4 mx-4" style="height:max-content;">
+
+         <div class="flex justify-between items-center my-2">
+            <a href="{{route('delivry_addressView')}}"
+                class="hover-color text-color text-center no-underline px-3 py-2 sm:hidden"
+                >               
+                <i class="fa-arrow-circle-left fa fa-2x"></i> 
+            </a>
+            <h1 class="font-bold md:text-3xl text-xl mx-auto">Proceder au Paiement.</h1>            
+        </div>
+        <div class="my-3 md:text-left text-center">
+            <h2 class="text-color">Montant Total à payer</h2>
+            <span class="block text-3xl my-3">{{coordonnee.delivry_price + cart.cartPrice}} FCFA</span>
+        </div>
+        <div class="flex flex-col justify-between text-lg" >
+            <form action="{{route('commmande_register')}}" method="POST" class="mx-auto">
+                {{ csrfField() }}
+                <input type="hidden" name="field" value="test">
+                <script                     
+                    src="/js/checkout.js"
+                    data-public-key="pk_sandbox_u1NWZyk6mrh5WJ7OR4cCA9NH"
+                    data-button-text="Payer"
+                    data-transaction-amount="{{coordonnee.delivry_price + cart.cartPrice}}"
+                    data-transaction-description="Paiement"
+                    data-currency-iso="XOF"
+                    data-widget-description="Your 100% african store"
+                    data-widget-image="{{assetsUrl('assets/1.jpg')}}"
+                    data-widget-title="Afrimarket"
+                    data-customer-firstname="{{coordonnee.fullname.split(' ')[1] ? coordonnee.fullname.split(' ')[1] : '' }}"
+                    data-customer-lastname="{{coordonnee.fullname.split(' ')[0] }}"
+                    data-customer-email="{{coordonnee.address}}"
+                    data-customer-phone_number-number="{{coordonnee.phone}}"
+                    data-customer-phone_number-country="BJ"
+                    data-button-class="bg-color rounded text-white p-2 shadow border-3 border-white"
+                    data-submit_form_on_failed=false >
+                </script>
+            </form>
+               
+        </div>
+
+    </div>
+
+
+    <section class="md:flex flex-col items-center px-2 mr-4 bg-red-100 md:w-1/3 w-10/12 my-3" style="heigh:max-content;">
+        <div class="my-2">
+            <h1 class="font-bold text-xl text-center">Votre panier</h1>            
+        </div>
+        <div class="md:max-h-80 md:overflow-y-scroll w-11/12 md:block flex flex-col items-center">
+            @each(cart_line in cart_lines)
+            <div class="flex justify-between items-center my-2 p-2 bg-red-50 " id="{{cart_line.id}}">
+                <div class="flex items-start xl:flex-row flex-col items-center w-full ">                       
+                    
+                    <img src="{{assetsUrl(cart_line.img)}}" class="w-28 h-28">
+
+                    <div class="w-full mx-2 flex flex-col items-center">
+                        <div class="flex lg:flex-row flex-col items-center">
+                            <h6 class="font-bold">{{cart_line.name }}</h6>                        
+                            <span class="flex items-center my-2 mx-1 ">                            
+                                <span id="qte"  class="w-16 text-center rounded-lg bg-transparent border">{{cart_line.quantity }} qte</span>                            
+                            </span>
+                        </div>
+                        <div class="w-full text-center">
+                            <span class="font-bold">Montant</span> : {{cart_line.price }} FCFA                                
+                        </div>
+                    </div>
+
+                </div> 
+                
+            </div>
+            @else
+                    Aucun Produit dans votre panier
+            @endeach
+        </div>
+        <div class="mx-auto my-3 text-center">
+            <span class="font-bold">Total Panier</span> : {{ cart.cartPrice }} FCFA 
+        </div> 
+        <a href="{{route('viewCaret')}}"
+            class="w-max mx-auto block text-color text-center border-1 border-color my-3 no-underline px-3 py-2 rounded transition duration-300 my-3"
+            >               
+                Revenir au Panier
+        </a>    
+    </section>
+
+    <section class="flex flex-col items-center px-2 mr-4 bg-red-100 md:w-1/3 w-10/12 my-3">
+        <div class="my-2">
+            <h1 class="font-bold text-xl text-center">Vos coordonnéee</h1>            
+        </div>
+        <div class="w-11/12 mx-auto flex flex-col items-center text-center">
+            <div class="flex justify-between xl:flex-row flex-col">
+               <div class="xl:my-3 my-2 flex flex-col  items-start"> 
+                    <h6 class="font-bold mx-1">fullname</h6>
+                    <span class="block text-gray-500 placeholder-gray-500 shadow bg-red-50 py-3 px-2 w-48 m-1">
+                        {{coordonnee.fullname }}
+                    </span>
+               </div>
+               <div class="xl:my-3 my-2 flex flex-col items-start">
+                    <h6 class="font-bold mx-1">address</h6>
+                    <span class=" block text-gray-500 placeholder-gray-500 shadow bg-red-50 py-3 px-2 w-48 m-1">
+                        {{coordonnee.address }}
+                    </span>
+               </div>
+                
+            </div>
+
+            <div class="flex justify-between xl:flex-row flex-col">
+                <div class="xl:my-3 my-2 flex flex-col  items-start">
+                    <h6 class="font-bold mx-1">Arrondissement</h6>
+                    <span class="blick text-gray-500 placeholder-gray-500 shadow bg-red-50 py-3 px-2 w-48 m-1">
+                        {{coordonnee.district }}
+                    </span>  
+                </div>  
+                <div class="xl:my-3 my-2 flex flex-col  items-start">
+                    <h6 class="font-bold mx-1">city</h6>
+                    <span class="block text-gray-500 placeholder-gray-500 shadow bg-red-50 py-3 px-2 w-48 m-1">
+                    {{coordonnee.city}}
+                    </span>      
+                </div>             
+            </div>
+
+            <div class="flex justify-between xl:flex-row flex-col">
+                <div class="xl:my-3 my-2 flex flex-col items-start">
+                    <h6 class="font-bold mx-1">phone</h6>
+                    <span class="block text-gray-500 placeholder-gray-500 shadow bg-red-50 py-3 px-2 w-48 m-1">
+                        {{coordonnee.phone}}
+                    </span>                                               
+                </div>
+                @if(coordonnee.delivry_price > 0 )
+                  <div class="xl:my-3 my-2 flex flex-col">
+                        <h6 class="font-bold mx-1 text-color">Frais de livraison</h6>
+                        <span class=" py-3 px-2 w-48 mx-1 ">
+                            {{coordonnee.delivry_price}} FCFA
+                        </span>                                               
+                    </div>
+                @endif
+            </div>
+
+        </div>
+        <a href="{{route('delivry_addressView')}}"
+                class="block text-color text-center border-1 border-color
+                     no-underline px-3 py-2 rounded transition duration-300 my-3"
+        >               
+                Revenir au Formulaire
+        </a>    
+    </section>
+</div>
+{{ script('js/checkout') }}
+@endsection

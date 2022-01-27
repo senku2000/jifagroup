@@ -1,0 +1,43 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <form id="addDistrictForm" class="row mt-4" action="" method="post">
+            {{ csrfField() }}
+
+            <h6 class="text-center">Adding district</h6>
+
+            <div class="col-6 form-group mb-2">
+                <select class="form-select" aria-label="Default select example"
+                        name="city_id">
+                    <option value="" selected>Choose city</option>
+                    @each(city in cities)
+                        <option value="{{ city.id }}">{{ city.name}}</option>
+                    @endeach
+                </select>
+                @if(hasErrorFor('city_id'))
+                    <small class="text-danger">{{ getErrorFor('city_id') }}</small>
+                @endif
+            </div>
+
+            <div class="col-6 form-group mb-2">
+                <input class="form-control" placeholder="District name's" type="text"
+                        name="name" value="{{ old('name', '') }}" >
+                @if(hasErrorFor('name'))
+                    <small class="text-danger">{{ getErrorFor('name') }}</small>
+                @endif
+            </div>
+                
+            <button type="submit" class="btn btn-secondary offset-5 col-2">Add</button>
+        </form>
+
+        <hr>
+
+        @include('admin/zones/districts-list')
+
+    </main>
+  
+@endsection

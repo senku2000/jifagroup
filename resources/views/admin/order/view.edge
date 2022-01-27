@@ -1,0 +1,155 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+            <h1 class="h2">Orders</h1>
+
+            <div class="btn-toolbar mb-2 mb-md-0">
+                <a type="button" class="btn btn-sm btn-outline-secondary"
+                    href="{{ referer }}">
+                    <i class="fa fa-back"></i>
+                    Go back
+                </a>
+            </div>
+
+        </div>
+
+        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+            <div class="card m-auto" style="width:19cm">
+
+                <div class="card-header">
+                    <div class="row">
+
+                        <small class="col-9 text-left">
+                            Order code : <strong> {{order.id}} </strong>
+                            | Delivery country : <strong> {{order.deliveryAddress.country}} </strong>
+                           <!-- | Paid by : <strong> {{order.payment.paymentMethod}} </strong-->
+                            | <br> Livraison : <strong>{{order.livraison? 'avec livraison' : 'sans livraison'}}</strong>
+                            |
+                            @if(order.shipped)
+                                <span class="text-center text-success">Shipped</span>
+                            @else
+                                <span class="text-center text-secondary">Not shipped</span>
+                            @endif
+                        </small>
+
+                        <small class="col-3 text-right"> {{order.created_at/*.toLocaleDateString()*/ }} </small>
+                    </div>
+                    
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row">
+
+                        <p class="col-5 text-left"> {{order.deliveryAddress.fullname}} </p>
+                        <h6 class="col-5 text-right">
+                            Total paid :
+                            <span class="text-primary">
+                                {{total }} FCFA
+                            </span>
+                        </h6>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-5">
+                            <div class="row">
+                                <h6 class="col-12">Delivery address :</h6>
+                                <small class="col-12">
+                                    {{order.deliveryAddress.address}}, 
+                                    {{order.deliveryAddress.city}}, 
+                                    {{--  {{order.deliveryAddress.state}},   --}}
+                                    {{order.deliveryAddress.country}} 
+                                    <br>
+                                    {{order.deliveryAddress.phone}}
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="offset-2 col-5">
+                            <div class="row">
+                                <h6 class="col-12">Payment :</h6>
+                                <small class="col-12">
+                                    <!--Payment method : <em>{{order.payment.paymentMethod}}</em> <br-->
+                                    Payment ID : {{order.payment.paymentId}} <br>
+                                </small>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row py-4">
+                        <div class="col-12">
+                            <h6 class="col-12 text-center">Cart</h6>
+
+                            <table class="table table-bordered table-striped p-2">
+
+                                <thead>
+                                    <tr>
+                                        <th>Quantity</th>
+                                        <th>Product</th>
+                                        <th class="text-right">Price</th>
+                                        <th class="text-right">Subtotal</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @each(line in order.cart.cart_lines)
+                                        <tr>
+                                            <td>{{line.quantity}}</td>
+
+                                            <td>
+                                                <div class="col-12 m-0">
+                                                    <div class="row">
+                                                        <div style="width: 70px;">
+                                                            @if(line.product.imageUrl)
+                                                                <img src="{{ assetsUrl(line.product.imageUrl) }}"
+                                                                    style="height: 40px; width: 70px;">
+                                                            @else
+                                                                <img src="http://placehold.it/700x500"
+                                                                    style="height: 40px; width: 70px;">
+                                                            @endif
+                                                        </div>
+
+                                                        <div class="pl-2">
+                                                            <p>
+                                                                N° : {{line.product.id}} <br>
+                                                                {{line.product.name}}
+                                                            </p>
+                                                        </div>
+                                                        
+                                                    </div>
+                                                </div>
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ line.product.price }} FCFA
+                                            </td>
+
+                                            <td class="text-right">
+                                                {{ line.product.price * line.quantity}} FCFA
+                                            </td>
+                                            
+                                        </tr>
+                                    @endeach
+                                    
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </main>
+  
+@endsection

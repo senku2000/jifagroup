@@ -1,0 +1,42 @@
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+        border-bottom">
+    <h1 class="h2">Shipping zone</h1>
+
+</div>
+
+<ul class="nav nav-tabs">
+
+    <li class="nav-item">
+        <a id="all" class="btn nav-link {{ (zoneMenu === 'cities')? 'active': ''}}"
+            href="{{ route('cities') }}">
+        Cities
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a id="onStore" class="btn nav-link {{ (zoneMenu === 'districts')? 'active': ''}}"
+            href="{{ route('adminDistricts') }}">
+        Districts
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a id="notOnStore" class="btn nav-link {{ (zoneMenu === 'deliveryPrices')? 'active': ''}}"
+            href="{{ route('adminDeliveryPrices') }}">
+        Delivery prices
+        </a>
+    </li>
+
+</ul>
+
+@if(old('successNotif'))
+<p class="alert alert-success mt-2">
+    {{ old('successNotif')}}
+</p>
+@endif
+
+@if(old('errorNotif'))
+<p class="alert alert-danger mt-2">
+    {{ old('errorNotif')}}
+</p>
+@endif

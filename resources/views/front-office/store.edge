@@ -1,0 +1,67 @@
+@layout('front-office/layouts/clientmain')
+
+@section('content')
+  
+    <main>
+
+        <section class="pt-5 text-center container">
+          <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light lg:mt-auto mt-5 lg:pt-0 pt-5 h-se w-max mx-auto">Categories</h1>                               
+            </div>
+            <div class="flex justify-evently scroller overflow-x-scroll lg:mt-auto mb-4" >
+              @each(category in categories)
+                <div>                                              
+                    <div>                                                 
+                      <a href="{{route('store',{category_id: category.id}) }}"
+                         class="block border border-color p-3 rounded m-2 no-underline text-color hover-color hover:bg-red-100 transition duration-300 {{ ( category.id == c_category_id ) ? 'bg-red-100  ' : ''}}" 
+                         style="width:max-content;"
+                        >
+                        {{category.name}}
+                      </a>                    
+                    </div>
+                </div> 
+               
+              @else
+              <div class="mx-auto text-center">
+                Pas de catégorie 
+              </div>
+              @endeach
+              
+              @if(others.length > 0 && categories.length > 0 )
+              <div>                                              
+                  <div>                                                 
+                    <a href="{{route('store', {category_id: 'others' }) }}" 
+                       class="block border border-color p-3 rounded m-2 no-underline text-color hover-color hover:bg-red-100 transition duration-300 {{ ( c_category_id === 'others' ) ? 'bg-red-100  ' : ''}}" 
+                       style="width:max-content;"
+                      >
+                      Autres
+                    </a>                    
+                  </div>
+              </div> 
+              @endif
+            </div>
+                           
+          </div>
+        </section>
+
+        <div class="album">
+            <div class="container">
+               
+              <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">                      
+                  @each( product in products)                                                 
+                      @component('front-office/components/prodCard',{product:product })                  
+                      @endcomponent                          
+                  @else
+                  <div class="m-auto text-center">
+                    Aucun produit disponible
+                  </div>
+                  @endeach   
+              </div>
+                  
+            </div>
+        </div>
+
+    </main>    
+
+@endsection

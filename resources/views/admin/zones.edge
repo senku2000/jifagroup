@@ -1,0 +1,43 @@
+@layout('admin/main')
+
+@section('content')
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+
+        @include('admin/zones-head')
+
+        <div class="table-responsive">
+            <form id="actionForm" action="" method="post">
+                {{ csrfField() }}
+
+                <table id="allZones" class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th scope="col">Select</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Created at</th>
+                            <th scope="col">Updated at</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @each(city in cities)
+                          <tr>
+                              <td>
+                                  <span>
+                                      <input type="checkbox" name="{{ city.id }}" id="{{ city.id }}">
+                                  </span>
+                              </td>
+                              <td>{{ city.name }}</td>
+                              <td>{{ city.created_at }}</td>
+                              <td>{{ city.updated_at }}</td>
+                          </tr>
+                        @endeach
+                    </tbody>
+
+                </table>
+            </form>
+        </div>
+
+    </main>
+  
+@endsection

@@ -1,0 +1,276 @@
+@layout('admin/main')
+
+@section('content')
+  <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3
+                border-bottom">
+
+      <h1 class="h2">Categories</h1>
+
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <a type="button" class="btn btn-sm btn-outline-secondary" href="{{ route('addProduct') }}">
+          Add product <i class="fa fa-plus"></i>
+        </a>
+      </div>
+
+    </div>
+
+    @if(old('successNotif'))
+      <h6 class="alert alert-success">
+        {{ old('successNotif')}}
+      </h6>
+    @endif
+
+    @if(old('errorNotif'))
+      <div class="alert alert-danger">
+        {{ old('errorNotif')}}
+      </div>
+    @endif
+    
+    <form id="addForm" action="{{ route('categories') }}" method="POST">
+        {{ csrfField() }}
+        <div class="d-flex align-items-center ">
+            <h6 class="mr-2" for="name">Category's name :</h6>
+
+            <div class="col-6 col-md-5 form-group mb-2 mr-2">
+                <input class="form-control" placeholder="Ex: Fruits" type="text"
+                        name="name" value="{{ old('name', '') }}" >
+                @if(hasErrorFor('name'))
+                    <small class="text-danger">{{ getErrorFor('name') }}</small>
+                @endif
+            </div>
+            
+            <button type="submit" class="btn btn-secondary">Add</button>
+            
+        </div>
+    </form>
+
+    <hr>
+
+    <form id="formGet" class="row" action="{{ route('categories') }}" method="GET">
+
+      <div class="offset-md-6 col-12 col-md-6 py-auto mb-2">
+
+        <div class="form-inline btn-group float-right">
+          <button id="1" type="button" class="btn btn-outline-secondary btn-sm" onclick="setOnDesc(1)">
+            <i class="fa fa-arrow-down"></i>
+          </button>
+          <button id="-1" type="button" class="btn btn-outline-secondary btn-sm" onclick="setOnDesc(-1)">
+            <i class="fa fa-arrow-up"></i>
+          </button>
+        </div>
+        
+        <div class="form-inline float-right mr-4">
+          <select id="sort2" class="form-control btn-sm" name="sort2" onchange="categories()">
+            <option value="updated_at">Recently</option>
+            <option value="name">Name</option>
+            <option value="created_at">Date</option>
+          </select>
+        </div>
+        <label class="form-inline float-right mr-1">and by :</label>
+
+        <div class="form-inline float-right mr-1">
+          <select id="sort1" class="form-control btn-sm" name="sort1" onchange="categories()">
+            <option value="updated_at">Recently</option>
+            <option value="name">Name</option>
+            <option value="created_at">Date</option>
+          </select>
+        </div>
+        <label class="form-inline float-right mr-1">Sort by :</label>
+
+      </div>
+      
+      <div class="col-12">
+
+        <div class="form-inline float-left">
+          <select id="perPage" class="form-control btn-sm" name="perPage"
+                  onchange="categories()">
+            <option value="10">10 per Page</option>
+            <option value="20">20 per Page</option>
+            <option value="30">30 per Page</option>
+            <option value="40">40 per Page</option>
+            <option value="50">50 per Page</option>
+          </select>
+        </div>
+
+        <div class="btn-group float-right">
+            @each(page in pages)
+              <button id="page{{page}}" class="btn btn-sm btn-outline-secondary" onclick="setPage({{ page }})">
+                {{ page }}
+              </button>
+            @endeach
+        </div>
+
+      </div>
+
+    </form>
+
+    <hr>
+
+    @if(categories.length > 0)
+      <div class="row">
+        <div class="col-12">
+          <p class="form-inline float-left mr-2">
+            Actions for select :
+          </p>
+          <div class="form-inline btn-group float-left">
+    
+            <button class="btn btn-outline-secondary btn-sm" onclick="select('deleteCategories')">
+              <i class="fa fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="table-responsive">
+        
+          <form id="myForm" action="{{ route('categoriesSelect') }}" method="POST">
+            {{ csrfField() }}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                      <th scope="col">Select</th>
+                      <th scope="col">Categories</th>
+                      <th scope="col">Created at</th>
+                      <th scope="col">Updated at</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @each((category, key) in categories)
+                        <tr>
+                          <td>
+                            <span>
+                              <input id="{{category.id}}" type="checkbox" name="{{ category.id }}">
+                            </span>
+                          </td>
+
+                          <td>{{ category.name }}</td>
+
+                          <td>{{ category.created_at }}</td>
+
+                          <td>{{ category.updated_at }}</td>
+
+                          <td class="d-flex">
+                            <a type="button" class="btn btn-outline-primary circle mr-4"
+                                href="{{ route('updateCategory', {id: category.id}) }}">
+                              <i class="fa fa-edit"></i>
+                            </a>
+
+                            <button type="button" class="btn btn-outline-danger circle"
+                                    onclick="deleteCategory({{key+1}})">
+                              <i class="fa fa-trash"></i>
+                            </button>
+
+                          </td>
+                        </tr>
+                    @endeach
+                </tbody>
+
+            </table>
+          </form>
+
+      </div>
+      
+    @else
+      No category
+    @endif
+
+  </main>
+
+  <style>
+    .circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+
+<script>
+
+  const sort1 = {{{ toJSON(sort1) }}}
+  const sort2 = {{{ toJSON(sort2) }}}
+  const perPage = {{{ toJSON(perPage) }}}
+
+  let page = {{{ toJSON(page) }}}
+  let onDesc = {{{ toJSON(onDesc) }}}
+
+  document.getElementById('sort1').value = sort1
+  document.getElementById("sort2").value = sort2
+  document.getElementById("perPage").value = perPage
+  document.getElementById("page"+page).classList.add('active')
+  document.getElementById(onDesc).classList.add('active')
+
+  function setPage(p){
+    page = p
+    categories()
+  }
+
+  function setOnDesc(d){
+    onDesc = d
+    categories()
+  }
+
+  function categories(){
+    var arrow = document.createElement("INPUT")
+    arrow.setAttribute("type", "number")
+    arrow.setAttribute("name", "onDesc")
+    arrow.setAttribute("value", onDesc)
+    document.getElementById("formGet").appendChild(arrow)
+    var pg = document.createElement("INPUT")
+    pg.setAttribute("type", "number")
+    pg.setAttribute("name", "page")
+    pg.setAttribute("value", page)
+    document.getElementById("formGet").appendChild(pg)
+    document.getElementById("formGet").submit()
+  }
+
+  function deleteCategory(key){
+    const  categories = {{{ toJSON(categories)}}}
+    const category = (categories[key-1])
+    var onDelete = confirm("Are you sure to delete "+category.name+" ?")
+    if(onDelete){
+      location.replace("/admin/category/delete/"+category.id)
+    }
+  }
+
+  function select(action){
+    const  categories = {{{ toJSON(categories)}}}
+    const categoriesId = []
+
+    categories.forEach(category => {
+      const ok = document.getElementById(category.id).checked === true
+      if(ok){
+        categoriesId.push(category.id)
+      }
+    });
+
+    if(categoriesId.length > 0){
+      let on
+      if(action === "deleteCategories"){
+        on = confirm("Are you sure to delete, the "+categoriesId.length+" categories selected ?")
+      }
+
+      if(on){
+        var x = document.createElement("INPUT")
+        x.setAttribute("type", "text")
+        x.setAttribute("name", "action")
+        x.setAttribute("value", action)
+        document.getElementById("myForm").appendChild(x)
+        document.getElementById("myForm").submit();
+      }
+
+    }else{
+      alert("No categories are selected !")
+    }
+
+  }
+  
+</script>
+
+  
+@endsection

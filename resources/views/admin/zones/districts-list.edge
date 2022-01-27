@@ -1,0 +1,123 @@
+@if(districts.length > 0)
+
+    <div class="row">
+        <div class="col-12">
+            <p class="form-inline float-left mr-2">
+                Actions for select :
+            </p>
+            <div class="form-inline btn-group float-left">
+                <button class="btn btn-outline-secondary btn-sm" onclick="select('deleteDistricts')">
+                    <i class="fa fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <form id="actionForm" action="{{ route('adminSelectDistricts') }}" method="post">
+            {{ csrfField() }}
+
+            <table id="allZones" class="table table-striped table-sm">
+                <thead>
+                    <tr>
+                        <th scope="col">Select</th>
+                        @if(zoneMenu !== "cities")
+                            <th scope="col">City</th>
+                        @endif
+                        <th scope="col">District</th>
+                        <th scope="col">Created at</th>
+                        <th scope="col">Updated at</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @each(district in districts)
+                        <tr>
+                            <td>
+                                <span>
+                                    <input type="checkbox" name="{{ district.id }}" id="{{ district.id }}">
+                                </span>
+                            </td>
+                            @if(zoneMenu !== "cities")
+                                <td>{{ district.city.name }}</td>
+                            @endif
+                            <td>{{ district.name }}</td>
+                            <td>{{ district.created_at }}</td>
+                            <td>{{ district.updated_at }}</td>
+
+                            <td class="d-flex">
+                                <a type="button" class="btn btn-outline-primary btn-sm mr-4"
+                                    href="{{ route('adminUpdateDistrict', {id: district.id}) }}">
+                                <i class="fa fa-edit"></i>
+                                </a>
+
+                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                        onclick="deleteDistrict({{district.id}})">
+                                <i class="fa fa-trash"></i>
+                                </button>
+
+                            </td>
+                            
+                        </tr>
+                    @endeach
+                </tbody>
+
+            </table>
+        </form>
+    </div>
+
+@else
+    <p>No districts</p>
+@endif
+
+
+<script>
+    const districts = {{{ toJSON(districts) }}}
+
+
+    function deleteDistrict(districtId){
+        const districtToDelete = districts.find( district => {
+                return districtId === district.id
+        })
+
+        var onDelete = confirm("Are you sure to delete "+districtToDelete.name+" ?")
+
+        if(onDelete){
+            location.replace('/admin/zones/district/delete/'+districtToDelete.id)
+        }
+    }
+
+
+    function select(action){
+        const districtId = []
+
+        districts.forEach(district => {
+            const ok = document.getElementById(district.id).checked === true
+            if(ok){
+                districtId.push(district.id)
+            }
+        });
+
+        if(districtId.length > 0){
+            let on
+
+            if(action === "deleteDistricts"){
+                on = confirm("Are you sure to delete, the "+districtId.length
+                                +" districts selected and all their delivery prices ?")
+            }
+
+            if(on){
+                var x = document.createElement("input")
+                x.setAttribute("type", "text")
+                x.setAttribute("name", "action")
+                x.setAttribute("value", action)
+                document.getElementById("actionForm").appendChild(x)
+                document.getElementById("actionForm").submit();
+            }
+
+        }else{
+            alert("No districts are selected !")
+        }
+    }
+
+</script>
