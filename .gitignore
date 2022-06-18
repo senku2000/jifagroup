@@ -1,7 +1,7 @@
 # Node modules
 node_modules
 package-lock.json
-
+public/uploads/images/products/*
 # Adonis directory for storing tmp files
 tmp
 
