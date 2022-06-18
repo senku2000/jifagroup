@@ -14,7 +14,7 @@
             <h1 class="font-bold md:text-3xl text-xl mx-auto">Proceder au Paiement.</h1>            
         </div>
         <div class="my-3 md:text-left text-center">
-            <h2 class="text-color">Montant Total à payer</h2>
+            <h2 class="text-color">Montant Total à payer{{proccess.env}}</h2>
             <span class="block text-3xl my-3">{{coordonnee.delivry_price + cart.cartPrice}} FCFA</span>
         </div>
         <div class="flex flex-col justify-between text-lg" >
@@ -30,7 +30,7 @@
                     data-currency-iso="XOF"
                     data-widget-description="Your 100% african store"
                     data-widget-image="{{assetsUrl('assets/1.jpg')}}"
-                    data-widget-title="Afrimarket"
+                    data-widget-title="JIFA GROUP"
                     data-customer-firstname="{{coordonnee.fullname.split(' ')[1] ? coordonnee.fullname.split(' ')[1] : '' }}"
                     data-customer-lastname="{{coordonnee.fullname.split(' ')[0] }}"
                     data-customer-email="{{coordonnee.address}}"

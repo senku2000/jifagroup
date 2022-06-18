@@ -3,6 +3,7 @@
 const User = use('App/Models/User')
 
 class UserController {
+    
     async loginView({ response, view }){
         const users = (await User.all()).toJSON()
 

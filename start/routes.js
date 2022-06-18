@@ -53,7 +53,7 @@ Route.get('/view-product/:id?', 'BtqController.viewProduct').as('view-product')
 Route.get('/api-get-product', 'BtqController.api_get_products').as('api_get_products')
 
 Route.get('/admin', ({ response }) => {
-        response.route('login')//redirect('/admin/dashboard')
+        response.route('login')
 })
 
 Route.get('/admin/auth/login', 'UserController.loginView').as('login')
