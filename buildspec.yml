@@ -49,7 +49,7 @@ phases:
       # - command
   build:
     commands:
-       - npm run start
+      #- npm run start
       # - command
   #post_build:
     #commands:
