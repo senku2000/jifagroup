@@ -1,0 +1,75 @@
+version: 0.2
+
+env:
+  variables:
+    HOST:0.0.0.0
+    PORT:3333
+    NODE_ENV:"production"
+    CACHE_VIEWS:false
+    
+    SESSION_DRIVER:"cookie"
+    HASH_DRIVER:"bcrypt"
+    #DB_CONNECTION:"pg"
+    #DB_HOST:127.0.0.1
+    #DB_PORT:3306
+    #DB_USER:"root"
+    #DB_PASSWORD:
+    #DB_DATABASE:jifa
+    
+       
+  #parameter-store:
+     # key: "value"
+     # key: "value"
+  #secrets-manager:
+     # key: secret-id:json-key:version-stage:version-id
+     # key: secret-id:json-key:version-stage:version-id
+  #exported-variables:
+     # - variable
+     # - variable
+  #git-credential-helper: yes
+#batch:
+  #fast-fail: true
+  #build-list:
+  #build-matrix:
+  #build-graph:
+phases:
+  install:
+    #Si vous utilisez l'image standard Ubuntu 2.0 ou version ultérieure, vous devez spécifier l'exécution des versions.
+    #Si vous spécifiez l'exécution des versions d'exécution et n'utilisez pas l'image Ubuntu 2.0, la génération échoue.
+    #runtime-versions:
+      # name: version
+      # name: version
+    commands:
+       - n 16.13.1
+       - npm i
+      # - command
+  #pre_build:
+    #commands:
+      # - command
+      # - command
+  build:
+    commands:
+       - npm run start
+      # - command
+  #post_build:
+    #commands:
+      # - command
+      # - command
+#reports:
+  #report-name-or-arn:
+    #files:
+      # - location
+      # - location
+    #base-directory: location
+    #discard-paths: yes
+    #file-format: JunitXml | CucumberJson
+artifacts:
+  files:
+     - '**/*'
+    # - location
+  #name: $(date +%Y-%m-%d)
+  #discard-paths: yes
+  #base-directory: location
+#cache:
+  #paths:
+    # - paths
