@@ -1,14 +1,14 @@
 <div class="col">
     <div class="car border-non mx-1">       
-        <img src="{{assetsUrl(product.imageUrl)}}" style="height:225px;max-width:350px;" class="shadow rounded-lg">
+        <img src="{{assetsUrl(product.imageUrl)}}" style="height:225px;width:90%;" class="shadow rounded-lg mx-auto">
         <div class="card-body text-center text-lg">
-            <p class="card-title font-medium text-xl">
+            <p class="card-title font-medium text-lg">
                 {{product.name }}
             </p>
-            <p class="card-text text-gray-600">{{product.description}}</p>
+            <p class="card-text text-gray-600 text-sm">{{product.description}}</p>
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group" >                                        
-                    <button type="button" onclick="func('{{product.id}}')" class="p-2 btn-outline-secondar bg-color hover-bg-color border border-color text-white rounded-full" style="font-size:15px;">Ajouter au panier</button>                    
+                    <button type="button" onclick="func('{{product.id}}')" class="p-2 btn-outline-secondar bg-color hover-bg-color border border-color text-white rounded-full text-sm" >Ajouter au panier</button>                    
                 </div>
                 <small class="text-muted">{{product.price}} FCFA</small>
             </div>
